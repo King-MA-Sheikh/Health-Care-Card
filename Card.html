@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>स्वास्थ्य लाभ कार्ड | Health Benefit Card</title>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+        #pdfContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+}
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .print-btn {
+            margin-bottom: 20px;
+            height: 35px;
+            width: 120px;
+            background: #fb8500;
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .print-btn:hover {
+            background: #e67e00;
+            transform: translateY(-2px);
+        }
+
+        .print-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Main Card Styling */
+        .card-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            padding: 12mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .header {
+            background: #fb8500;
+            padding: 12px;
+            border-radius: 5px 5px 0 0;
+            text-align: center;
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin: 0 auto 8px;
+        }
+
+        .header h1 {
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .header h3 {
+            font-size: 12px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .card-body {
+            border: 1px solid #ddd;
+            border-top: none;
+            padding: 12px;
+            background: #fff;
+            border-radius: 0 0 5px 5px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .email-info {
+            font-size: 12px;
+            display: block;
+            margin-bottom: 8px;
+            text-align: center;
+            color: #555;
+        }
+
+        .content-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            row-gap: 6px;
+            column-gap: 8px;
+        }
+
+        .label {
+            font-weight: 700;
+            font-size: 11px;
+            color: #333;
+        }
+
+        .data-value {
+            font-size: 11px;
+            padding: 2px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .photo, .qr {
+            border: 1px solid #333;
+            height: 90px;
+            width: 90px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            overflow: hidden;
+        }
+
+        .qr {
+            border-color: #fb8500;
+        }
+
+        .user-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .footer-bar {
+            background-color: #fb8500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            border-radius: 0 0 5px 5px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .footer-bar h4 {
+            color: #333;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .info-section {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px;
+            background: #fff;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .info-section h5 {
+            margin: 0 0 8px 0;
+            color: #fb8500;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .info-content {
+            max-height: 140mm;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .info-section p {
+            font-size: 9px;
+            margin: 3px 0;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .info-section i {
+            color: #fb8500;
+            margin-right: 4px;
+            font-size: 9px;
+            flex-shrink: 0;
+        }
+
+        /* PDF Container (Hidden) */
+        .pdf-container {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 12mm;
+            background: white;
+            position: relative;
+            display: none;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0 auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .card-container {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .card-container {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                position: relative;
+                top: auto;
+                left: auto;
+                width: 95%;
+                margin: 10px auto;
+                height: auto;
+            }
+            
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .image-section {
+                flex-direction: row;
+                justify-content: center;
+                margin-left: 0;
+                margin-top: 15px;
+            }
+            
+            .print-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                display: block;
+                margin: 0 auto 20px;
+            }
+
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            
+            .header h3 {
+                font-size: 0.8rem;
+            }
+            
+            .logo {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .photo, .qr {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .info-section p {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading" id="loading">Generating PDF, please wait...</div>
+    
+    <button class="print-btn" id="pdfButton" onclick="generatePDF()">Download PDF</button>
+    
+    <!-- Main Card Display -->
+    <div class="card-container" id="mainCard">
+        <div class="header">
+            <img src="logo.png" alt="logo" class="logo" id="mainLogo">
+            <h1>स्वास्थ्य लाभ कार्ड</h1>
+            <h3>Ragghu Baba Samaj Seva Sansthan</h3>
+        </div>
+
+        <div class="card-body">
+            <i class="email-info">Email : <span>ragghubabasamajsevasanthan@gmail.com</span></i>
+            
+            <div class="content-wrapper">
+                <div class="form-group">
+                    <div class="label">Name:</div>
+                    <div class="data-value" id="displayName"></div>
+                    <div class="label">Father's Name:</div>
+                    <div class="data-value" id="displayFName"></div>
+                    <div class="label">Unique ID:</div>
+                    <div class="data-value" id="displayUID"></div>
+                    <div class="label">Contact:</div>
+                    <div class="data-value" id="displayContact"></div>
+                    <div class="label">Address:</div>
+                    <div class="data-value" id="displayAddress"></div>
+                </div>
+                
+                <div class="image-section">
+                    <div class="photo">
+                        <img id="userPhoto" class="user-photo" alt="User Photo">
+                    </div>
+                    <div class="qr">
+                        <img id="mainQr" src="qr.png" alt="QR Code" class="user-photo">
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bar">
+                <h4>ragghubabasamajsevasanthan@gmail.com | Customer Support: +91-9278092867</h4>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h5>वर्तमान सुविधाएं</h5>
+            <div class="info-content">
+                <p><i class="bx bx-right-arrow-circle"></i>स्वास्थ्य लाभ कार्ड केवल धारक के लिए वैध होगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>कार्ड धारक कभी भी हमारे अनुभव डॉक्टर से बिल्कुल मुफ्त में परामर्श ले सकते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>Online या निःशुल्क परामर्श लेकर आप अपना पैसा समय या स्वास्थ्य को बचा सकते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>परामर्श लेने का समय 9:00 बजे से शाम 6:00 बजे तक ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड बिल्कुल मुफ्त और बिना किसी अतिरिक्त शुल्क के जनहित में जारी किया जाएगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>कार्ड खो जाने के बाद हमारे फोन नंबर पर फोन करके बताना अनिवार्य होगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>स्वास्थ्य लाभ कार्ड Achieve Goals Business Auxiliary Services Pvt.Ltd. कंपनी की तरफ से बिल्कुल मुफ्त और बिना किसी अतिरक्त शुल्क के बनाया जा रहा है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड Achieve Goals Business Auxiliary Services Pvt.Ltd. की तरफ से आयुर्वेद और स्वास्थ्य सुविधाओं के लिए प्रति जागृति उत्पन्न करने के लिए बनाया जा रहा है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड मातृ 3 माहीन के लिए वैध होगा आप चाहे तो इस कार्ड को 3 माहीन के बाद भी बिल्कुल मुफ्त में नवीनीकृत (Renew) करवा स्कत्रे है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड आपको बिल्कुल मुफ्त में बना के दिया जाएगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>क्या कार्ड को बनाने का उद्देश्य लोगो तक स्वास्थ्य सुविधाएं पहुंचाना है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>अगर आपको कभी यह कार्ड रद्द करवाना है तो आप स्केट करना चाहते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>अगर आप किसी भी तरह से इस कार्ड को गलत रीति से इस्तमाल करते हैं तो कंपानी आप पर कानूनी कार्रवाई करने में कामयाब रहेंगे ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>अगर आपको कार्ड बनाना है, तो किसी भी तरह की कोई शिकायत नहीं है तो ऐप सीधा कंपनी के प्रबंधन से बात कर सकता है, किसी भी रीति से कोई भी कानूनी कार्रवाई नहीं कर सकता ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड बिना कोई पैसा लिए बनाया जा रहा है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>किसी भी तरह की बात सुनकर मुझे आपकी विशेष छूट दी जाएगी ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>इसके अलावा और भी काफी सुविधाएं आपके कार्ड के माध्यम से दी जाएंगी ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>कार्ड को इस्तमाल करने की विधि कार्ड के ऊपर जो Customer Support नंबर लिखा हुआ है आप इस नंबर पर फोन करके पूरी जानकारी ले सकते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>इस कार्ड को बनाने के लिए अगर आपसे कोई भी पैसा मांगता है तो आप कंपनी के प्रबंधन को फोन करके हमें बताएं ताकि शिकायत दर्ज करवा सकते हैं ।</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Container (Hidden) -->
+    <div class="pdf-container" id="pdfContainer">
+        <div class="header">
+            <!-- Base64 encoded logo to ensure it appears in PDF -->
+            <img id="pdfLogo" alt="logo" class="logo">
+            <h1>स्वास्थ्य लाभ कार्ड</h1>
+            <h3>Achieve Goals Business Auxiliary Services PVT.LTD.</h3>
+        </div>
+
+        <div class="card-body">
+            <i class="email-info">Email : <span>info@achievegoals.co.in, achievegoals.co@gmail.com</span></i>
+            
+            <div class="content-wrapper">
+                <div class="form-group">
+                    <div class="label">Name:</div>
+                    <div class="data-value" id="pdfDisplayName"></div>
+                    <div class="label">Father's Name:</div>
+                    <div class="data-value" id="pdfDisplayFName"></div>
+                    <div class="label">Unique ID:</div>
+                    <div class="data-value" id="pdfDisplayUID"></div>
+                    <div class="label">Contact:</div>
+                    <div class="data-value" id="pdfDisplayContact"></div>
+                    <div class="label">Address:</div>
+                    <div class="data-value" id="pdfDisplayAddress"></div>
+                </div>
+                
+                <div class="image-section">
+                    <div class="photo">
+                        <img id="pdfUserPhoto" class="user-photo" alt="User Photo">
+                    </div>
+                    <div class="qr">
+                        <img id="pdfQr" class="user-photo" alt="QR Code">
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bar">
+                <h4>WWW.acheivegoals.in | Customer Support: +91-9991826957</h4>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h5>वर्तमान सुविधाएं</h5>
+            <div class="info-content">
+                <p><i class="bx bx-right-arrow-circle"></i>स्वास्थ्य लाभ कार्ड केवल धारक के लिए वैध होगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>कार्ड धारक कभी भी हमारे अनुभव डॉक्टर से बिल्कुल मुफ्त में परामर्श ले सकते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>Online या निःशुल्क परामर्श लेकर आप अपना पैसा समय या स्वास्थ्य को बचा सकते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>परामर्श लेने का समय 9:00 बजे से शाम 6:00 बजे तक ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड बिल्कुल मुफ्त और बिना किसी अतिरिक्त शुल्क के जनहित में जारी किया जाएगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>कार्ड खो जाने के बाद हमारे फोन नंबर पर फोन करके बताना अनिवार्य होगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>स्वास्थ्य लाभ कार्ड Achieve Goals Business Auxiliary Services Pvt.Ltd. कंपनी की तरफ से बिल्कुल मुफ्त और बिना किसी अतिरक्त शुल्क के बनाया जा रहा है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड Achieve Goals Business Auxiliary Services Pvt.Ltd. की तरफ से आयुर्वेद और स्वास्थ्य सुविधाओं के लिए प्रति जागृति उत्पन्न करने के लिए बनाया जा रहा है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड मातृ 3 माहीन के लिए वैध होगा आप चाहे तो इस कार्ड को 3 माहीन के बाद भी बिल्कुल मुफ्त में नवीनीकृत (Renew) करवा स्कत्रे है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड आपको बिल्कुल मुफ्त में बना के दिया जाएगा ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>क्या कार्ड को बनाने का उद्देश्य लोगो तक स्वास्थ्य सुविधाएं पहुंचाना है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>अगर आपको कभी यह कार्ड रद्द करवाना है तो आप स्केट करना चाहते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>अगर आप किसी भी तरह से इस कार्ड को गलत रीति से इस्तमाल करते हैं तो कंपानी आप पर कानूनी कार्रवाई करने में कामयाब रहेंगे ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>अगर आपको कार्ड बनाना है, तो किसी भी तरह की कोई शिकायत नहीं है तो ऐप सीधा कंपनी के प्रबंधन से बात कर सकता है, किसी भी रीति से कोई भी कानूनी कार्रवाई नहीं कर सकता ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>यह कार्ड बिना कोई पैसा लिए बनाया जा रहा है ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>किसी भी तरह की बात सुनकर मुझे आपकी विशेष छूट दी जाएगी ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>इसके अलावा और भी काफी सुविधाएं आपके कार्ड के माध्यम से दी जाएंगी ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>कार्ड को इस्तमाल करने की विधि कार्ड के ऊपर जो Customer Support नंबर लिखा हुआ है आप इस नंबर पर फोन करके पूरी जानकारी ले सकते हैं ।</p>
+                <p><i class="bx bx-right-arrow-circle"></i>इस कार्ड को बनाने के लिए अगर आपसे कोई भी पैसा मांगता है तो आप कंपनी के प्रबंधन को फोन करके हमें बताएं ताकि शिकायत दर्ज करवा सकते हैं ।</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load data from localStorage and display on card
+        document.addEventListener('DOMContentLoaded', function() {
+            const cardData = JSON.parse(localStorage.getItem('healthCardData'));
+            const pdfButton = document.getElementById('pdfButton');
+            
+            if (cardData) {
+                // Display data on main card
+                document.getElementById('displayName').textContent = cardData.name;
+                document.getElementById('displayFName').textContent = cardData.fname;
+                document.getElementById('displayUID').textContent = cardData.uid;
+                document.getElementById('displayContact').textContent = cardData.contact;
+                document.getElementById('displayAddress').textContent = cardData.address;
+                
+                // Display data on PDF card
+                document.getElementById('pdfDisplayName').textContent = cardData.name;
+                document.getElementById('pdfDisplayFName').textContent = cardData.fname;
+                document.getElementById('pdfDisplayUID').textContent = cardData.uid;
+                document.getElementById('pdfDisplayContact').textContent = cardData.contact;
+                document.getElementById('pdfDisplayAddress').textContent = cardData.address;
+                
+                if (cardData.photo) {
+                    document.getElementById('userPhoto').src = cardData.photo;
+                    document.getElementById('pdfUserPhoto').src = cardData.photo;
+                }
+                
+                // Enable PDF button
+                pdfButton.disabled = false;
+            } else {
+                // If no data found, disable PDF button and redirect to form
+                pdfButton.disabled = true;
+                alert('No data found. Please fill out the form first.');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Function to convert image to base64 (for local images)
+        function imageToBase64(img) {
+            return new Promise((resolve) => {
+                // For data URLs (user uploaded photos), use as is
+                if (img.src.startsWith('data:')) {
+                    resolve(img.src);
+                    return;
+                }
+                
+                // For local files, try to convert
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                try {
+                    ctx.drawImage(img, 0, 0);
+                    const dataURL = canvas.toDataURL('image/png');
+                    resolve(dataURL);
+                } catch (error) {
+                    console.warn('Could not convert image to base64:', error);
+                    // Return original src as fallback
+                    resolve(img.src);
+                }
+            });
+        }
+
+        // Function to fetch and convert image to base64
+        function fetchImageAsBase64(url) {
+            return new Promise((resolve, reject) => {
+                fetch(url)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    })
+                    .catch(error => reject(error));
+            });
+        }
+
+        // Main PDF generation function
+        async function generatePDF() {
+            const cardData = JSON.parse(localStorage.getItem('healthCardData'));
+            
+            if (!cardData) {
+                alert('No data available to generate PDF. Please fill the form first.');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const element = document.getElementById('pdfContainer');
+            const pdfButton = document.getElementById('pdfButton');
+            
+            try {
+                // Show loading and disable button
+                loading.style.display = 'flex';
+                pdfButton.disabled = true;
+                
+                // Show PDF container temporarily
+                element.style.display = 'flex';
+                
+                // Convert logo to base64 to ensure it appears in PDF
+                try {
+                    const logoBase64 = await fetchImageAsBase64('logo.png');
+                    document.getElementById('pdfLogo').src = logoBase64;
+                } catch (error) {
+                    console.warn('Could not load logo.png:', error);
+                }
+                
+                // Convert QR code to base64
+                try {
+                    const qrBase64 = await fetchImageAsBase64('qr.png');
+                    document.getElementById('pdfQr').src = qrBase64;
+                } catch (error) {
+                    console.warn('Could not load qr.png:', error);
+                }
+                
+                // Convert user photo to base64 if needed
+                const userPhoto = document.getElementById('pdfUserPhoto');
+                if (userPhoto.src && !userPhoto.src.startsWith('data:')) {
+                    try {
+                        const userPhotoBase64 = await fetchImageAsBase64(userPhoto.src);
+                        userPhoto.src = userPhotoBase64;
+                    } catch (error) {
+                        console.warn('Could not convert user photo to base64:', error);
+                    }
+                }
+                
+                // Wait for DOM to update
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // PDF options optimized for single page
+                const opt = {
+                    margin: [0, 0, 5, 5], // Reduced margins
+                    filename: `Health_Card_${cardData.uid}.pdf`,
+                    image: { 
+                        type: 'jpeg', 
+                        quality: 0.95 
+                    },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+
+                        scrollX: 0,
+                        scrollY: 0,
+
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                    },
+                    pagebreak: { 
+                        mode: ['avoid-all'] 
+                    }
+                };
+
+                // Generate and save PDF
+                await html2pdf().set(opt).from(element).save();
+                
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                
+                // Try alternative method with even smaller margins
+                try {
+                    console.log('Trying alternative PDF generation...');
+                    
+                    const simpleOpt = {
+                        margin: [2, 2, 2, 2],
+                        filename: `Health_Card_${cardData.uid}.pdf`,
+                        html2canvas: { 
+                            scale: 2,
+                            useCORS: true,
+                            logging: false
+                        },
+                        jsPDF: { 
+                            unit: 'mm', 
+                            format: 'a4', 
+                            orientation: 'portrait' 
+                        }
+                    };
+                    
+                    await html2pdf().set(simpleOpt).from(element).save();
+                } catch (fallbackError) {
+                    console.error('Fallback PDF generation failed:', fallbackError);
+                    alert('Error generating PDF. Please try using a local web server for best results.');
+                }
+            } finally {
+                // Always clean up
+                loading.style.display = 'none';
+                element.style.display = 'none';
+                pdfButton.disabled = false;
+                
+                // Reload images to their original state
+                if (cardData.photo) {
+                    document.getElementById('pdfUserPhoto').src = cardData.photo;
+                }
+                document.getElementById('pdfLogo').src = 'logo.png';
+                document.getElementById('pdfQr').src = 'qr.png';
+            }
+        }
+    </script>
+</body>
+</html>
