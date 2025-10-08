@@ -8,7 +8,6 @@
     margin: 0 auto;
 }
 
-
 * {
     margin: 0;
     padding: 0;
@@ -29,22 +28,16 @@ body {
 
 .registration-no {
     position: absolute;
-    top: 50px;
-    left: 50px;
+    top: 20px;
+    right: 20px;
     background-color: #fff;
     border-radius: 4px;
     padding: 4px 10px;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 10px;
     color: #000;
     box-shadow: 0 0 3px rgba(0,0,0,0.2);
-}
-
-
-.registration-no h6 {
-    position: absolute;
-    top: 7px;
-    left: 7px;
+    z-index: 5;
 }
 
 .print-btn {
@@ -103,21 +96,43 @@ body {
     justify-content: flex-start;
 }
 
+/* Updated Header Styles */
 .header {
     background: #fb8500;
-    padding: 12px;
+    padding: 15px;
     border-radius: 5px 5px 0 0;
     text-align: center;
     margin-bottom: 0;
     width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .logo {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     border: 2px solid white;
-    margin: 0 auto 8px;
+    flex-shrink: 0;
+}
+
+.header-text {
+    flex: 1;
+    text-align: center;
+    min-width: 200px;
 }
 
 .header h1 {
@@ -125,15 +140,19 @@ body {
     font-weight: 900;
     font-size: 35px;
     color: #000;
-    margin-bottom: 4px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+    margin-bottom: 5px;
+    margin-right: 100px;
 }
 
 .header h3 {
     font-size: 22px;
     color: #000;
     font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 0;
+    margin-right: 100px;
+    line-height: 1.2;
 }
 
 .card-body {
@@ -158,26 +177,35 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    margin-left: 50px;
 }
 
+/* Updated Form Group - Very tight spacing */
 .form-group {
     flex: 1;
     display: grid;
-    grid-template-columns: 110px 1fr;
-    row-gap: 6px;
-    column-gap: 8px;
+    grid-template-columns: 85px 1fr; /* Reduced label width */
+    row-gap: 0; /* No row gap */
+    column-gap: 2px; /* Minimal column gap */
+    align-items: center;
 }
 
 .label {
     font-weight: 700;
     font-size: 11px;
     color: #333;
+    text-align: left;
+    padding-right: 2px;
 }
 
 .data-value {
-    font-size: 11px;
-    padding: 2px;
-    border-bottom: 1px solid #eee;
+    font-size: 10px;
+    padding: 5px 15px;
+    font-weight: 600;
+    /* border-bottom: 1px solid #eee; */
+    min-height: 13px; /* Consistent height */
+    display: flex;
+    align-items: center;
 }
 
 .image-section {
@@ -265,7 +293,7 @@ body {
     flex-shrink: 0;
 }
 
-/* PDF Container (Hidden) */
+/* PDF Container (Hidden) - Optimized for PDF */
 .pdf-container {
     width: 210mm;
     min-height: 297mm;
@@ -282,6 +310,31 @@ body {
     margin: 0 auto;
 }
 
+/* PDF-specific optimizations - Ultra tight spacing */
+.pdf-container .form-group {
+    grid-template-columns: 80px 1fr; /* Even tighter for PDF */
+    row-gap: 0; /* No gap between rows */
+    column-gap: 1px; /* Minimal column gap */
+}
+
+.pdf-container .label {
+    font-size: 10px;
+    font-weight: 600;
+    padding-right: 1px;
+}
+
+.pdf-container .data-value {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 5px 10px;
+    /* border-bottom: 0.5px solid #ddd; */
+    min-height: 12px;
+}
+
+.pdf-container .content-wrapper {
+    margin-bottom: 6px; /* Reduced margin for PDF */
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .card-container {
@@ -293,15 +346,38 @@ body {
     .card-container {
         width: 95%;
     }
+    
+    .header h1 {
+        font-size: 30px;
+    }
+    
+    .header h3 {
+        font-size: 20px;
+    }
+    
+    .logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .form-group {
+        grid-template-columns: 80px 1fr;
+        column-gap: 1px;
+    }
 }
 
+/* Mobile Styles - Logo on Left, Reg No on Right */
 @media (max-width: 768px) {
-
     .registration-no {
         position: absolute;
-        top: 80px;
+        top: 15px;
+        right: 15px;
+        margin-bottom: 0;
+        align-self: auto;
+        font-size: 9px;
+        padding: 3px 8px;
     }
-
+    
     .card-container {
         position: relative;
         top: auto;
@@ -309,6 +385,64 @@ body {
         width: 95%;
         margin: 10px auto;
         height: auto;
+        padding: 8mm;
+    }
+    
+    .header {
+        padding: 12px 15px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        min-height: 100px;
+        position: relative;
+    }
+    
+    .header-content {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+    }
+    
+    .logo {
+        width: 60px;
+        height: 60px;
+        margin: 0;
+        order: 1;
+    }
+    
+    .header-text {
+        text-align: left;
+        order: 2;
+        min-width: auto;
+        flex: 1;
+    }
+    
+    .header h1 {
+        font-size: 20px;
+        margin-top: 0;
+        text-align: left;
+    }
+    
+    .header h3 {
+        font-size: 16px;
+        text-align: left;
+    }
+    
+    /* Ultra tight form group for mobile */
+    .form-group {
+        grid-template-columns: 75px 1fr;
+        row-gap: 0;
+        column-gap: 1px;
+    }
+    
+    .label {
+        font-size: 10px;
+    }
+    
+    .data-value {
+        font-size: 10px;
     }
     
     .content-wrapper {
@@ -336,12 +470,21 @@ body {
 }
 
 @media (max-width: 576px) {
+    .card-container {
+        padding: 5mm;
+    }
+    
+    .header {
+        padding: 10px 12px;
+        min-height: 90px;
+    }
+    
     .header h1 {
-        font-size: 1.1rem;
+        font-size: 18px;
     }
     
     .header h3 {
-        font-size: 0.8rem;
+        font-size: 14px;
     }
     
     .logo {
@@ -355,6 +498,97 @@ body {
     }
     
     .info-section p {
+        font-size: 8px;
+    }
+    
+    .registration-no {
+        font-size: 8px;
+        padding: 3px 6px;
+        top: 12px;
+        right: 12px;
+    }
+    
+    /* Even tighter for small mobile */
+    .form-group {
+        grid-template-columns: 70px 1fr;
+        column-gap: 0;
+    }
+    
+    .label {
+        font-size: 9px;
+        padding-right: 0;
+    }
+    
+    .data-value {
+        font-size: 9px;
+        padding: 5px 10px;
+    }
+}
+
+@media (max-width: 400px) {
+    .header h1 {
+        font-size: 16px;
+    }
+    
+    .header h3 {
+        font-size: 13px;
+    }
+    
+    .logo {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .header-content {
+        gap: 8px;
+    }
+    
+    .registration-no {
+        font-size: 7px;
+        padding: 2px 5px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .header {
+        min-height: 80px;
+        padding: 8px 10px;
+    }
+    
+    .form-group {
+        grid-template-columns: 65px 1fr;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 350px) {
+    .header h1 {
+        font-size: 14px;
+    }
+    
+    .header h3 {
+        font-size: 12px;
+    }
+    
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .registration-no {
+        font-size: 6px;
+        padding: 2px 4px;
+    }
+    
+    .form-group {
+        grid-template-columns: 60px 1fr;
+    }
+    
+    .label {
+        font-size: 8px;
+    }
+    
+    .data-value {
         font-size: 8px;
     }
 }
